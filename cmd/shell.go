@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/gorilla/websocket"
 	"github.com/spf13/cobra"
@@ -56,7 +54,7 @@ var shellCmd = &cobra.Command{
 		defer term.Restore(int(os.Stdin.Fd()), oldState)
 
 		sigCh := make(chan os.Signal, 1)
-		signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM, syscall.SIGWINCH)
+		notifyShellSignals(sigCh)
 
 		sendResize := func() {
 			w, h, err := term.GetSize(int(os.Stdin.Fd()))
@@ -122,11 +120,7 @@ var shellCmd = &cobra.Command{
 
 		go func() {
 			for sig := range sigCh {
-				switch sig {
-				case syscall.SIGWINCH:
-					sendResize()
-				case syscall.SIGINT, syscall.SIGTERM:
-					conn.Close()
+				if handleShellSignal(sig, sendResize, conn) {
 					return
 				}
 			}
