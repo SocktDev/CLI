@@ -7,7 +7,6 @@ Command-line interface for managing Sockt cloud sandboxes. Built in Go with the 
 ### From Source
 
 ```bash
-cd cli
 go build -o sockt .
 ```
 
@@ -17,9 +16,33 @@ Move the binary to your PATH:
 mv sockt /usr/local/bin/
 ```
 
+### Release Builds
+
+Build cross-platform release artifacts (binaries, `.tar.gz`/`.zip` archives, and `checksums.txt`) into `dist/`:
+
+```bash
+make release
+```
+
+Override the embedded version:
+
+```bash
+make release VERSION=0.1.0
+```
+
+Other useful targets:
+
+```bash
+make build    # build sockt for your current platform
+make test       # run tests
+make clean      # remove dist/ and local binary
+```
+
 ### Requirements
 
 - Go 1.26.2+
+- `make` (for release builds)
+- `zip` (for Windows release archive)
 
 ---
 
